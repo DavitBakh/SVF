@@ -296,7 +296,7 @@ void SrcSnkDDA::dumpSlices()
 {
 
     if(Options::DumpSlice())
-        const_cast<SVFG*>(getSVFG())->dump("Slice",true);
+        const_cast<SVFG*>(getSVFG())->dump("Slice");
 }
 
 void SrcSnkDDA::printZ3Stat()
