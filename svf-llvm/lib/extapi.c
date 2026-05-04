@@ -31,6 +31,11 @@ void *fopen(const char *voidname, const char *mode)
     return NULL;
 }
 
+int open(const char *pathname, int flags, ...)
+{
+    return 0;
+}
+
 __attribute__((annotate("ALLOC_HEAP_RET"), annotate("AllocSize:UNKNOWN")))
 void *fopen64(const char *voidname, const char *mode)
 {
