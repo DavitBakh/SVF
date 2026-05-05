@@ -256,6 +256,8 @@ public:
     static const Option<bool> MemoryLeakCheck;
     /// file open close checker, Default: false
     static const Option<bool> FileCheck;
+    /// custom file open close checker, Default: false
+    static const Option<bool> CustomFileCheck;
     /// double free checker, Default: false
     static const Option<bool> DFreeCheck;
     /// data race checker, Default: false

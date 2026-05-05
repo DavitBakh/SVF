@@ -154,11 +154,11 @@ public:
     }
     inline bool isPartialReachable() const
     {
-        return partialReachable || reachGlob;
+        return partialReachable;
     }
     inline bool isAllReachable() const
     {
-        return fullReachable || reachGlob;
+        return fullReachable;
     }
     inline bool isReachGlobal() const
     {

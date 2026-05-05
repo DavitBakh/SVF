@@ -53,6 +53,7 @@ typedef GraphReachSolver<SVFG*,CxtDPItem> CFLSrcSnkSolver;
  */
 class SrcSnkDDA : public CFLSrcSnkSolver
 {
+    friend class CustomFileChecker;
 
 public:
     typedef ProgSlice::SVFGNodeSet SVFGNodeSet;

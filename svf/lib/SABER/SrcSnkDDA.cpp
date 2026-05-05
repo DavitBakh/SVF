@@ -203,7 +203,6 @@ void SrcSnkDDA::FWProcessOutgoingEdge(const DPIm& item, SVFGEdge* edge)
     if(isGlobalSVFGNode(dstNode) || getCurSlice()->isReachGlobal())
     {
         getCurSlice()->setReachGlobal();
-        return;
     }
 
 
