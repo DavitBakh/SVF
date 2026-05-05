@@ -216,6 +216,40 @@ SaberCondAllocator::evaluateTestNullLikeExpr(const BranchStmt *branchStmt, const
     return Condition::nullExpr();
 }
 
+SaberCondAllocator::Condition
+SaberCondAllocator::evaluateTestMinusOneLikeExpr(const BranchStmt *branchStmt, const SVFBasicBlock* succ)
+{
+
+    const SVFBasicBlock* succ1 = branchStmt->getSuccessor(0)->getBB();
+
+    const ValVar* condVar = SVFUtil::cast<ValVar>(branchStmt->getCondition());
+    if (condVar->isConstDataOrAggDataButNotNullPtr())
+    {
+        // branch condition is a constant value, return nullexpr because it cannot be test null
+        //  br i1 false, label %44, label %75, !dbg !7669 { "ln": 2033, "cl": 7, "fl": "re_lexer.c" }
+        return Condition::nullExpr();
+    }
+    if (isTestMinusOneExpr(SVFUtil::cast<ICFGNode>(condVar->getICFGNode())))
+    {
+        // succ is then branch
+        if (succ1 == succ)
+            return getFalseCond();
+        // succ is else branch
+        else
+            return getTrueCond();
+    }
+    if (isTestNotMinusOneExpr(condVar->getICFGNode()))
+    {
+        // succ is then branch
+        if (succ1 == succ)
+            return getTrueCond();
+        // succ is else branch
+        else
+            return getFalseCond();
+    }
+    return Condition::nullExpr();
+}
+
 /*!
  * Evaluate condition for program exit (e.g., exit(0))
  */
@@ -331,6 +365,10 @@ SaberCondAllocator::Condition SaberCondAllocator::evaluateBranchCond(const SVFBa
                     Condition evalTestNullLike = evaluateTestNullLikeExpr(branchStmt, succ);
                     if (!eq(evalTestNullLike, Condition::nullExpr()))
                         return evalTestNullLike;
+
+                    Condition evalTestMinusOneLike = evaluateTestMinusOneLikeExpr(branchStmt, succ);
+                    if (!eq(evalTestMinusOneLike, Condition::nullExpr()))
+                        return evalTestMinusOneLike;
                     break;
                 }
             }
@@ -376,6 +414,33 @@ bool SaberCondAllocator::isTestNotNullExpr(const ICFGNode* test) const
     return false;
 }
 
+bool SaberCondAllocator::isTestMinusOneExpr(const ICFGNode* test) const
+{
+    if(!test) return false;
+    for(const SVFStmt* stmt : PAG::getPAG()->getSVFStmtList(test))
+    {
+        if(const CmpStmt* cmp = SVFUtil::dyn_cast<CmpStmt>(stmt))
+        {
+            return isTestContainsMinusOneAndTheValue(cmp) && isEQCmp(cmp);
+        }
+    }
+    return false;
+}
+
+
+bool SaberCondAllocator::isTestNotMinusOneExpr(const ICFGNode* test) const
+{
+    if(!test) return false;
+    for(const SVFStmt* stmt : PAG::getPAG()->getSVFStmtList(test))
+    {
+        if(const CmpStmt* cmp = SVFUtil::dyn_cast<CmpStmt>(stmt))
+        {
+            return isTestContainsMinusOneAndTheValue(cmp) && isNECmp(cmp);
+        }
+    }
+    return false;
+}
+
 /*!
  * Return true if:
  * (1) cmp contains a null value
@@ -413,6 +478,35 @@ bool SaberCondAllocator::isTestContainsNullAndTheValue(const CmpStmt *cmp) const
         return inDirVal.find(op0) != inDirVal.end();
     }
     else if (SVFUtil::isa<ConstNullPtrValVar>(op0))
+    {
+        Set<const SVFVar* > inDirVal;
+        inDirVal.insert(getCurEvalSVFGNode()->getValue());
+        for (const auto &it: getCurEvalSVFGNode()->getOutEdges())
+        {
+            inDirVal.insert(it->getDstNode()->getValue());
+        }
+        return inDirVal.find(op1) != inDirVal.end();
+    }
+    return false;
+}
+
+bool SaberCondAllocator::isTestContainsMinusOneAndTheValue(const CmpStmt *cmp) const
+{
+
+    // must be val var?
+    const SVFVar* op0 = cmp->getOpVar(0);
+    const SVFVar* op1 = cmp->getOpVar(1);
+    if (SVFUtil::isa<ConstIntValVar>(op1) && SVFUtil::cast<ConstIntValVar>(op1)->getSExtValue() == -1)
+    {
+        Set<const SVFVar* > inDirVal;
+        inDirVal.insert(getCurEvalSVFGNode()->getValue());
+        for (const auto &it: getCurEvalSVFGNode()->getOutEdges())
+        {
+            inDirVal.insert(it->getDstNode()->getValue());
+        }
+        return inDirVal.find(op0) != inDirVal.end();
+    }
+    else if (SVFUtil::isa<ConstIntValVar>(op0) && SVFUtil::cast<ConstIntValVar>(op0)->getSExtValue() == -1)
     {
         Set<const SVFVar* > inDirVal;
         inDirVal.insert(getCurEvalSVFGNode()->getValue());
