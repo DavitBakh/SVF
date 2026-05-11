@@ -832,6 +832,8 @@ const Option<bool> Options::MemoryLeakCheck(
     "leak", "Memory Leak Detection",false);
 const Option<bool> Options::FileCheck(
     "fileck", "File Open/Close Detection",false);
+const Option<bool> Options::CustomFileCheck(
+    "custom-fileck", "Custom File Open/Close Detection",false);
 const Option<bool> Options::DFreeCheck(
     "dfree", "Double Free Detection",false);
 const Option<bool> Options::RaceCheck(

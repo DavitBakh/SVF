@@ -30,6 +30,7 @@
 #include "SVF-LLVM/SVFIRBuilder.h"
 #include "SABER/LeakChecker.h"
 #include "SABER/FileChecker.h"
+#include "SABER/CustomFileChecker.h"
 #include "SABER/DoubleFreeChecker.h"
 #include "Util/CommandLine.h"
 #include "Util/Options.h"
@@ -60,6 +61,8 @@ int main(int argc, char ** argv)
         saber = std::make_unique<FileChecker>();
     else if(Options::DFreeCheck())
         saber = std::make_unique<DoubleFreeChecker>();
+    else if(Options::CustomFileCheck())
+        saber = std::make_unique<CustomFileChecker>();
     else
         saber = std::make_unique<LeakChecker>();  // if no checker is specified, we use leak checker as the default one.
 

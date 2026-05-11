@@ -100,6 +100,7 @@ static const ei_pair ei_pairs[]=
     {"XFree", SaberCheckerAPI::CK_FREE},
 
     {"fopen", SaberCheckerAPI::CK_FOPEN},
+    {"open", SaberCheckerAPI::CK_FOPEN},
     {"\01_fopen", SaberCheckerAPI::CK_FOPEN},
     {"\01fopen64", SaberCheckerAPI::CK_FOPEN},
     {"\01readdir64", SaberCheckerAPI::CK_FOPEN},
@@ -121,6 +122,7 @@ static const ei_pair ei_pairs[]=
 
 
     {"fclose", SaberCheckerAPI::CK_FCLOSE},
+    {"close", SaberCheckerAPI::CK_FCLOSE},
     {"XCloseDisplay", SaberCheckerAPI::CK_FCLOSE},
     {"XtCloseDisplay", SaberCheckerAPI::CK_FCLOSE},
     {"__res_nclose", SaberCheckerAPI::CK_FCLOSE},

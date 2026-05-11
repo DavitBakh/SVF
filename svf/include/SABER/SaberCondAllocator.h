@@ -267,6 +267,8 @@ private:
     Condition evaluateLoopExitBranch(const SVFBasicBlock*  bb, const SVFBasicBlock* succ);
     /// Return branch condition after evaluating test null like expression
     Condition evaluateTestNullLikeExpr(const BranchStmt* branchStmt, const SVFBasicBlock* succ);
+    /// Return branch condition after evaluating test minus one like expression
+    Condition evaluateTestMinusOneLikeExpr(const BranchStmt* branchStmt, const SVFBasicBlock* succ);
     /// Return condition when there is a branch calls program exit
     Condition evaluateProgExit(const BranchStmt* branchStmt, const SVFBasicBlock* succ);
     /// Collect basic block contains program exit function call
@@ -284,8 +286,14 @@ private:
     bool isTestNullExpr(const ICFGNode* test) const;
     /// Return true if this is a test not null expression
     bool isTestNotNullExpr(const ICFGNode* test) const;
+    /// Return true if this is a test minus one expression
+    bool isTestMinusOneExpr(const ICFGNode* test) const;
+    /// Return true if this is a test not minus one expression
+    bool isTestNotMinusOneExpr(const ICFGNode* test) const;
     /// Return true if two values on the predicate are what we want
     bool isTestContainsNullAndTheValue(const CmpStmt* cmp) const;
+    /// Return true if two values on the predicate are what we want
+    bool isTestContainsMinusOneAndTheValue(const CmpStmt* cmp) const;
     //@}
 
     /// Release memory
